@@ -1,0 +1,16 @@
+{
+  "name": "turing-atlas",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "An inspectable Turing machine and fixed-table universal Turing machine laboratory",
+  "scripts": {
+    "build": "python3 scripts/build.py",
+    "test": "python3 -m unittest discover -s python -v && node --test tests/*.test.js",
+    "check": "npm run build && npm test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}
