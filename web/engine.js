@@ -1,3 +1,5 @@
+import {MORE_EXAMPLES} from './algorithms.js';
+
 /** Generic deterministic multitape TM executor. No target-program decoding occurs here. */
 export const BLANK = 'B';
 export const ALPHABET = '^|:10BLRH$';
@@ -70,6 +72,7 @@ export class Target {
   restore(s){Object.assign(this,{q:s.q,head:s.head,steps:s.steps,halt:s.halt,tape:new Map(s.tape)});}
 }
 export const EXAMPLES={
+  ...MORE_EXAMPLES,
   add:{name:'一元加法',en:'Unary addition',input:'110111',rules:[[1,'1',1,'1','R'],[1,'0',2,'1','R'],[2,'1',2,'1','R'],[2,'B',3,'B','L'],[3,'1',3,'B','H']],description:'用 0 分隔两个一元数：11 0 111 表示 2 + 3，结果为 11111。先把分隔符改成 1，再擦除最右侧一个 1。'},
   invert:{name:'逐位取反',en:'Bitwise inversion',input:'10110',rules:[[1,'0',1,'1','R'],[1,'1',1,'0','R'],[1,'B',1,'B','H']],description:'从左到右，把 0 写成 1、把 1 写成 0，遇到空白后停机。10110 → 01001。'},
   increment:{name:'二进制加一',en:'Binary increment',input:'1011',rules:[[1,'0',1,'0','R'],[1,'1',1,'1','R'],[1,'B',2,'B','L'],[2,'1',2,'0','L'],[2,'0',2,'1','H'],[2,'B',2,'1','H']],description:'先找到末尾，再向左处理进位。1011（11）变成 1100（12）；111 则变成 1000，展示向负下标扩展纸带。'}

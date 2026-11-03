@@ -1,32 +1,54 @@
 <!doctype html>
 <html lang="zh-CN">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f3f1e9"><title>Turing Atlas — 看见计算的每一步</title><meta name="description" content="可逐步检查的图灵机与通用图灵机实验室：真实转移表、三条纸带、规则匹配与可回放执行轨迹。"><link rel="stylesheet" href="style.css"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#faf9f6"><title>Turing Atlas — 看见计算的每一步</title><meta name="description" content="可逐步检查的图灵机与通用图灵机实验室：真实转移表、三条纸带、规则匹配与可回放执行轨迹。"><link rel="stylesheet" href="style.css"></head>
 <body>
-<aside class="sidebar">
-<a class="brand" href="#"><span class="brand-mark">t<span>→</span></span><span>TURING<br>ATLAS<small>图灵机实验室</small></span></a>
-<div class="side-label">THE COMPUTATION ATLAS</div>
-<button class="nav-item active" data-tab="lab"><span>01</span> 运行实验室 <b>↗</b></button>
-<button class="nav-item" data-tab="guide"><span>02</span> 从规则到通用计算 <b>↗</b></button>
-<button class="nav-item" data-tab="reference"><span>03</span> 完整转移表 <b>↗</b></button>
-<div class="side-note"><span class="dot"></span> 真正的状态转移<br><p>固定的机器。可替换的程序。<br>每一个步骤，都有据可查。</p></div>
-<div class="side-bottom"><span>FINITE RULES.<br>UNBOUNDED POSSIBILITY.</span><a href="README.html" target="_blank" rel="noopener">项目文档 ↗</a><small>v1.0 · Browser-local · No dependencies</small></div>
-</aside>
+<header class="site-header">
+  <a class="brand" href="./">Turing Atlas<span>图灵机实验室</span></a>
+  <nav aria-label="主导航">
+    <button class="nav-item active" data-tab="lab">实验室</button>
+    <button class="nav-item" data-tab="guide">原理</button>
+    <button class="nav-item" data-tab="reference">转移表</button>
+    <a href="https://github.com/LYK-love/turing-atlas">GitHub ↗</a>
+  </nav>
+</header>
 <main>
-<header class="topbar"><span>交互式计算理论 / INTERACTIVE COMPUTATION</span><button id="export" class="text-button">导出执行轨迹 ↓</button></header>
 <section id="lab" class="page">
-<div class="intro"><div><div class="eyebrow"><i></i> EXPERIMENT 001</div><h1>看见计算的<span>每一步。</span></h1><p>从一条转移规则，到一台通用机器。<br class="mobile-break">放慢时间，观察计算是如何发生的。</p></div><div class="hero-glyph" aria-hidden="true"><span>q</span><small>δ</small><b>→</b><em>q′</em></div></div>
-<div class="modebar"><div role="tablist" aria-label="执行模式"><button class="mode active" data-mode="tm" role="tab" aria-selected="true">图灵机 <code>M</code></button><button class="mode" data-mode="utm" role="tab" aria-selected="false">通用图灵机 <code>U</code></button></div><span id="mode-caption">直接执行目标机器的转移规则</span></div>
+<div class="intro"><h1>图灵机实验室</h1><p>选一个程序，观察每一步读写与磁头移动。</p></div>
+<div class="modebar"><div role="tablist" aria-label="执行模式"><button class="mode active" data-mode="tm" role="tab" aria-selected="true">目标机器 <code>M</code></button><button class="mode" data-mode="utm" role="tab" aria-selected="false">通用机器 <code>U</code></button></div><span id="mode-caption"></span></div>
 <div class="workspace">
 <div class="main-column">
-<section class="panel setup"><div class="panel-heading"><span class="section-number">01 / PROGRAM</span><span class="badge">可替换程序</span></div><div class="setup-fields"><label>选择一个算法<select id="example"><option value="add">一元加法 · 2 + 3</option><option value="invert">逐位取反 · 10110 → 01001</option><option value="increment">二进制加一 · 1011 → 1100</option><option value="custom">自定义程序</option></select></label><label>输入纸带 <small>0 / 1 / B</small><input id="input" value="110111" maxlength="256" spellcheck="false" aria-label="输入纸带"></label><button id="load" class="outline-button">载入 ↗</button></div><p id="program-description" class="description"></p><details id="editor"><summary>查看 / 编辑目标程序 JSON <span>+</span></summary><textarea id="rules" spellcheck="false" rows="7" aria-label="目标程序规则 JSON"></textarea><div class="edit-bottom"><label>初始状态 <input id="initial" type="number" min="1" max="1000" value="1"></label><button id="import" class="text-button">导入程序 JSON ↑</button><button id="download-program" class="text-button">下载程序 ↓</button></div></details></section>
-<section class="panel machine-panel"><div class="panel-heading"><span class="section-number">02 / LIVE MACHINE</span><span id="status" class="status"><i></i> 就绪</span></div><div class="machine-top"><div><small id="state-label">目标状态</small><strong id="state">q1</strong></div><div class="counter"><small id="steps-label">M 执行步数</small><strong id="steps">0000</strong></div><div class="counter utm-only"><small>已完成的 M 步数</small><strong id="macro">0</strong></div></div><div id="tapes"></div><div class="tape-legend"><span><i class="head-key"></i> 当前磁头</span><span><i class="write-key"></i> 上一步写入</span><span><code>□</code> = 空白 B</span><span>双向无限纸带 · 视窗跟随磁头</span></div><div class="transport"><div><button id="back" class="icon-button" title="后退一步" aria-label="后退一步">↶</button><button id="play" class="primary-button">▶ 自动运行</button><button id="step" class="outline-button">单步 <span>→</span></button><button id="macro-step" class="outline-button utm-only">完成 M 的一步 ⇥</button><button id="reset" class="icon-button" title="重置" aria-label="重置">↺</button></div><label class="speed">速度<select id="speed"><option value="700">慢速</option><option value="250" selected>正常</option><option value="40">快速</option></select></label></div><div id="message" class="message" role="status" aria-live="polite">点击「单步」，观察第一条规则如何改变纸带。</div></section>
-<section class="panel trace-panel"><div class="panel-heading"><span class="section-number">03 / EXECUTION TRACE</span><span class="muted">最近 40 步 · 完整轨迹可导出</span></div><div class="trace-scroll"><table><thead><tr><th>STEP</th><th>当前状态</th><th>读取</th><th>写入</th><th>移动</th><th>下一状态</th></tr></thead><tbody id="trace"></tbody></table></div><div class="result-bar"><span>当前非空区间 <code id="output">110111</code></span><button id="export-csv" class="text-button">CSV ↓</button></div></section>
+<section class="panel setup"><div class="setup-fields">
+<label>程序<select id="example"></select></label>
+<label id="pattern-field" hidden>查找模式<input id="pattern" value="101" maxlength="12" spellcheck="false"></label>
+<label>输入纸带<input id="input" value="110111" maxlength="256" spellcheck="false" aria-label="输入纸带"></label>
+<button id="load" class="outline-button">载入</button>
+</div><p id="program-description" class="description"></p><details id="editor"><summary>查看 / 编辑目标程序 JSON <span>+</span></summary><textarea id="rules" spellcheck="false" rows="7" aria-label="目标程序规则 JSON"></textarea><div class="edit-bottom"><label>初始状态 <input id="initial" type="number" min="1" max="1000" value="1"></label><button id="import" class="text-button">导入程序 JSON ↑</button><button id="download-program" class="text-button">下载程序 ↓</button></div></details></section>
+<section class="panel machine-panel"><div class="panel-heading"><span class="section-number">纸带</span><span id="status" class="status"><i></i> 就绪</span></div><div class="machine-top"><div><small id="state-label">目标状态</small><strong id="state">q1</strong></div><div class="counter"><small id="steps-label">M 执行步数</small><strong id="steps">0000</strong></div><div class="counter utm-only"><small>已完成的 M 步数</small><strong id="macro">0</strong></div></div><div id="tapes"></div><div class="tape-legend"><span><i class="head-key"></i> 当前磁头</span><span><i class="write-key"></i> 上一步写入</span><span><code>□</code> = 空白 B</span></div><div class="transport"><div><button id="back" class="icon-button" title="后退一步" aria-label="后退一步">↶</button><button id="play" class="primary-button">▶ 自动运行</button><button id="step" class="outline-button">单步 <span>→</span></button><button id="macro-step" class="outline-button utm-only">完成 M 的一步 ⇥</button><button id="reset" class="icon-button" title="重置" aria-label="重置">↺</button></div><label class="speed">速度<select id="speed"><option value="700">慢速</option><option value="250" selected>正常</option><option value="40">快速</option><option value="0">批量</option></select></label></div><div id="message" class="message" role="status" aria-live="polite">点击「单步」，观察第一条规则如何改变纸带。</div></section>
+<div class="result-bar"><span>纸带内容</span><code id="output">110111</code></div>
+<details class="trace-panel">
+  <summary>执行轨迹 <small>最近 40 步</small></summary>
+  <div class="trace-scroll"><table><thead><tr><th>步数</th><th>当前状态</th><th>读取</th><th>写入</th><th>移动</th><th>下一状态</th></tr></thead><tbody id="trace"></tbody></table></div>
+  <div class="export-bar"><button id="export" class="text-button">下载 JSON</button><button id="export-csv" class="text-button">下载 CSV</button></div>
+</details>
 </div>
-<div class="inspector-column"><section class="panel inspector"><div class="panel-heading"><span class="section-number">RULE INSPECTOR</span><span class="live-dot"></span></div><h2>此刻，发生了什么？</h2><div class="phase-label" id="phase-name">读取 → 查表</div><p id="phase-description"></p><div class="equation" id="equation"></div><div class="operation-list" id="operations"></div><div class="match-caption" id="match-caption">目标机器的状态转移表</div><div class="rule-table-scroll"><table class="rules-table"><thead id="rules-head"></thead><tbody id="target-rules"></tbody></table></div><p class="rule-hint"><i></i> 高亮行是下一步将执行的规则</p><div id="last-rule"></div><div class="utm-only u-note"><b>同一张 δ<sub>U</sub>，运行所有程序</b><p>U 只读取三条纸带上的符号。程序切换不会改变它的 3,656 条规则。</p></div></section><section class="teaching-card"><span>TRY THIS</span><h3 id="try-title">只改变一个符号。</h3><p id="try-description">把输入改为 111011，然后载入。数一数：需要几步，两个数才变成一个数？</p><button id="show-guide" class="text-button">理解背后的原理 ↗</button></section></div>
+<aside class="inspector-column">
+  <section class="panel inspector">
+    <h2>下一步</h2>
+    <div class="phase-label" id="phase-name"></div>
+    <p id="phase-description"></p>
+    <div class="equation" id="equation"></div>
+    <div id="last-rule"></div>
+    <details class="rule-details">
+      <summary id="match-caption">匹配的转移规则</summary>
+      <div class="rule-table-scroll"><table class="rules-table"><thead id="rules-head"></thead><tbody id="target-rules"></tbody></table></div>
+      <p class="rule-hint">高亮行是下一步将执行的规则。</p>
+    </details>
+  </section>
+</aside>
 </div>
 </section>
 <section id="guide" class="page" hidden><div class="eyebrow">THE IDEA BEHIND THE MACHINE</div><h1>有限规则，<span>通用计算。</span></h1><p class="lead">读一个符号，查一条规则，写入，再移动。复杂的计算从这里开始。</p><div class="guide-grid"><article class="panel prose"><span class="section-number">01 / A TURING MACHINE</span><h2>什么构成一台图灵机？</h2><p>纸带由无限多个格子组成，每格存一个有限字母表中的符号。磁头每次读取当前格；有限控制器保存当前状态。转移函数决定下一状态、写入内容和磁头移动方向。</p><div class="formula">δ(q, a) = (q′, b, d)</div><p>本项目的目标机器使用符号 0、1、B。B 是空白；L 和 R 分别移动一格；H 是「写入后停机」的简写，不移动磁头。它可以直接改写成传统的停机状态。</p><h3>一元加法为什么成立？</h3><p>输入 11<span class="accent">0</span>111 表示 2 + 3。把分隔符 0 写成 1，会多出一个 1；再到最右侧擦去一个 1，剩下五个 1。状态 q1 负责寻找分隔符，q2 找到末尾，q3 擦除并停机。</p><button class="outline-button" id="guide-add">亲手执行加法 →</button></article><article class="panel prose"><span class="section-number">02 / A UNIVERSAL MACHINE</span><h2>把机器本身，写在纸带上。</h2><p>U 的转移表是固定的。加法或取反的规则不在它的控制代码里，而在第一条纸带上。U 扫描程序、比较状态和符号，找到规则后，修改第二条和第三条纸带。</p><div class="formula">U(〈M〉, x) ≃ M(x)</div><dl><dt>程序带 P</dt><dd>用固定格式编码 M 的全部规则；U 只读这条带。</dd><dt>模拟带 T</dt><dd>就是 M 的纸带，模拟带的磁头就是 M 的磁头。</dd><dt>状态带 Q</dt><dd>用一元编码保存 M 当前状态，如 q3 写成 ^111。</dd></dl><p>更换目标程序只会更换初始纸带。U 的状态集、字母表和 3,656 条转移规则始终不变。</p><button class="outline-button" id="guide-utm">进入 UTM 微观视角 →</button></article><article class="panel prose wide"><span class="section-number">03 / FOLLOW THE ENCODING</span><h2>一条规则，在纸带上是什么样？</h2><div class="encoding-demo"><code>1 : 0 : 11 : 1 : R |</code><div><span>当前 q1</span><span>读取 0</span><span>转到 q2</span><span>写入 1</span><span>向右</span><span>结束</span></div></div><p>完整程序以 ^ 开头，以 $ 结束。状态编号采用非空一元串，字段以 : 分隔，规则以 | 分隔。B 在纸带上就是一个真正的空白格；即使出现在程序字段里，也由相邻分隔符确定它的位置。</p><h3>UTM 的一步与 M 的一步</h3><p>U 的一个微步只执行一条 δU：同时读取三个磁头下的符号，同时写入、移动三个磁头，并改变 U 的有限控制状态。模拟 M 的一步通常需要许多微步。状态比较、旧状态擦除、新状态复制和磁头复位，每一项都由这些规则完成。</p><h3>为什么它是通用的？</h3><p>它可解释任意有限的确定性单带 0/1/B 图灵机，状态数量不固定。任意有限字母表图灵机均可用二进制块编码转成这一类机器；S（不动）可用两步 R、L 展开。浏览器对输入长度、状态编号和运行步数设有资源上限，数学模型中的纸带和运行时间不受这些界面上限限制。</p><h3>如何核验，而不是相信动画？</h3><p>网页的 U 运行器只按固定 JSON 转移表执行。Python 定义生成完整表；独立的目标机器运行器负责在每个宏步边界核对纸带、磁头、状态和停机结果。测试还逐行检查 JavaScript 使用的表与 Python 表相同。</p><a href="README.html">查看运行、测试与部署说明 ↗</a></article></div></section>
 <section id="reference" class="page" hidden><div class="eyebrow">THE COMPLETE FINITE CONTROL</div><h1>每一条规则，<span>都在这里。</span></h1><p class="lead">48 个非停机状态 · 3,656 条显式转移 · 9 个纸带符号 · 三带同步读写</p><div class="panel reference-panel"><div class="reference-controls"><label>搜索状态或符号<input id="search" placeholder="例如 CMP1、RESET3、HALT_OK" spellcheck="false"></label><button id="download-delta" class="outline-button">下载完整 δU JSON ↓</button></div><p id="table-count"></p><div class="reference-scroll"><table><thead><tr><th>#</th><th>U 当前状态</th><th>读取 (P,T,Q)</th><th>U 下一状态</th><th>写入 (P,T,Q)</th><th>移动 (P,T,Q)</th></tr></thead><tbody id="delta-body"></tbody></table></div><div class="pagination"><button id="prev-page" class="outline-button">← 上一页</button><span id="page-count"></span><button id="next-page" class="outline-button">下一页 →</button></div><p class="description">这里没有通配符。生成器将所有有限符号组合展开为具体规则；未定义的组合不用于合法编码的运行。HALT_OK 与 HALT_NO_RULE 没有后继规则。</p></div></section>
-<footer><span>TURING ATLAS <i> / </i> An open computation laboratory</span><span>从有限出发，理解无限。 ↗</span></footer>
+<footer><a href="README.html">项目文档</a></footer>
 </main><input type="file" id="file-input" accept="application/json,.json" hidden><script type="module" src="app.js"></script>
 </body></html>
