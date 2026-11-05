@@ -1,3 +1,4 @@
+import {substringRules} from '../web/algorithms.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -43,3 +44,48 @@ test('150 seeded arbitrary programs agree at every bounded macro boundary',()=>{
  for(let i=0;i<150;i++){const n=1+rnd(5),rules=[];for(let q=1;q<=n;q++)for(const c of '01B')if(rnd(4))rules.push([q,c,1+rnd(n),'01B'[rnd(3)],'LRH'[rnd(3)]]);if(!rules.length)rules.push([1,'0',1,'0','H']);compare(rules,Array.from({length:rnd(7)},()=>'01'[rnd(2)]).join(''));}
 });
 test('undefined U transition fails visibly',()=>{const m=new Machine(rows,[new Map(),new Map(),new Map()],[0,0,0]);assert.throws(()=>m.step(),/未定义/);});
+
+
+test('decision programs produce one result bit on all short binary inputs', () => {
+  for (let length = 0; length <= 7; length++) {
+    for (let value = 0; value < 2 ** length; value++) {
+      const input = length ? value.toString(2).padStart(length, '0') : '';
+      const expected = {
+        parity: String((input.match(/1/g) ?? []).length % 2),
+        palindrome: Number(input === [...input].reverse().join('')).toString(),
+        substring: Number(input.includes('101')).toString(),
+      };
+      for (const [name, bit] of Object.entries(expected)) {
+        const machine = new Target(EXAMPLES[name].rules, input);
+        for (let step = 0; step < 100 && !machine.halt; step++) machine.step();
+        assert.equal(machine.halt, 'HALT_OK', name + ' ' + input);
+        assert.equal(output(machine.tape), bit, name + ' ' + input);
+      }
+    }
+  }
+});
+
+test('new examples and custom substring patterns run on the fixed UTM', () => {
+  const cases = [
+    [EXAMPLES.parity.rules, '', '0'],
+    [EXAMPLES.parity.rules, '10110', '1'],
+    [EXAMPLES.substring.rules, '10001', '0'],
+    [substringRules('00101'), '000101', '1'],
+    [substringRules('111111111111'), '111111111111', '1'],
+    [EXAMPLES.palindrome.rules, '10101', '1'],
+    [EXAMPLES.palindrome.rules, '10100', '0'],
+    [EXAMPLES.palindrome.rules, '00', '1'],
+    [EXAMPLES.equal.rules, '0', '1'],
+    [EXAMPLES.equal.rules, '1110111', '1'],
+    [EXAMPLES.equal.rules, '11101', '0'],
+    [EXAMPLES.equal.rules, '10111', '0'],
+  ];
+  for (const [rules, input, bit] of cases) {
+    const {u} = compare(rules, input, 1, 20000, 150);
+    assert.equal(u.state, 'HALT_OK', input);
+    assert.equal(output(u.tapes[1]), bit, input);
+  }
+  assert.throws(() => substringRules(''));
+  assert.throws(() => substringRules('10B'));
+  assert.throws(() => substringRules('1'.repeat(13)));
+});
