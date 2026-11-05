@@ -24,7 +24,7 @@ typography; system-font fallbacks work without network access.
 - **U mode:** inspect the actual δU transition, three tapes and three heads.
 - **Macro step:** run U until it completes one target transition. A separate
   interpreter checks target state, tape, head and halt outcome at each boundary.
-- **Three programs:** unary addition, bitwise inversion, binary increment.
+- **Seven programs:** unary addition, bitwise inversion, binary increment, bit parity, configurable binary substring search, palindrome recognition, and equality of unary counts. The four decision programs leave a single result bit on the tape.
 - Edit/import/export a custom deterministic target machine as JSON.
 - Search/paginate all 3,656 U transitions; download the complete table.
 - Export the entire session as JSON or CSV, including pre/post head coordinates.
